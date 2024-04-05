@@ -11,7 +11,7 @@ import BodySkeleton from "./skeleton/bodySkeleton";
 
 function Body() {
   const bottomRef = useRef<HTMLDivElement>(null);
-  const { messages, setMesssages, setLoading, isLoading } = useMessageStore();
+  const { messages, setMesssages, setLoading, isLoading, message } = useMessageStore();
   const { user } = useUserStore();
   const { conversation } = useConversationStore();
   const { conversationId } = useConversation();
@@ -38,10 +38,10 @@ function Body() {
       py-2
       space-y-2"
     >
-      {isLoading ?
+      {isLoading==='all' ?
       <BodySkeleton/>
       :
-        messages?.map((item) =>
+        messages?.slice(0,-1)?.map((item,index) =>
           item.messageSentBy == user?._id ? (
             <div
               key={item._id}
@@ -103,7 +103,7 @@ function Body() {
           ))
       }
 
-      {isLoading === 'message' && <div
+     <div
         className="
           flex 
           flex-row 
@@ -114,20 +114,21 @@ function Body() {
           "
       >
         <div
-          className="
-            flex 
+          className={
+            `flex 
             flex-col
             items-end 
             w-full
-          "
+            ${messages?.length===0 && 'hidden'}`
+          }
         >
           <H5 title="You" />
           <H5
-            title={"pending"}
+            title={isLoading==='message' ? `${message}@@` : messages?.[messages?.length-1]?.body }
             className="bg-accent text-start py-[7px] px-3 rounded-md mt-1 max-w-[50%]"
           />
         </div>
-      </div>}
+      </div>
       <div className="pt-2" ref={bottomRef} />
     </div>
   );

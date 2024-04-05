@@ -126,7 +126,7 @@ export const getChatsByUserId =
     }
 
 
-export const getChatById = async (id: string): Promise<ChatResponseDto> => {
+export const getAggregationChatById = async (id: string): Promise<ChatResponseDto> => {
     try {
         const chat: any = await ChatModel.aggregate([
             {
@@ -257,6 +257,7 @@ export const getChatByUserIds = async (userIds: string[]): Promise<any> => {
 }
 
 export const createChat = <ChatPayload>(values: ChatPayload): Promise<CreateChatResponseDto> => ChatModel.create(values);
+export const getChatById = (id: string): any => ChatModel.findOne({ _id: id });
 export const deleteChatById = (id: string): any => ChatModel.findOneAndDelete({ _id: id });
 export const updateChatById = <ChatPayload>(id: string, values: ChatPayload): Promise<CreateChatResponseDto> => ChatModel.findByIdAndUpdate(id, values, { new: true });
 

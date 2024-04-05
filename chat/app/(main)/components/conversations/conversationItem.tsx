@@ -3,21 +3,22 @@ import Avatar from "../users/avatar";
 import { H4, H5 } from "@/components/ui/typograpgy";
 import { ConversationModal } from "../../lib/conversations/conversation-model";
 import useConversationStore from "@/app/store/conversation-store";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Routes } from "@/app/lib/constant";
 import useUserStore from "@/app/store/user-store";
 import { useConversationUser } from "@/app/hooks/useConversationUser";
 import useMessageStore from "@/app/store/message-store";
 
 interface ConversationItemProps {
-  conversation: ConversationModal
+  conversation: ConversationModal,
+  active: boolean
 }
 
 function ConversationItem({
-  conversation
+  conversation,
+  active
 }: ConversationItemProps) {
   const router = useRouter();
-
   const { user } = useUserStore();
   const { setConversation } = useConversationStore()
   const { conversationUser} = useConversationUser(conversation,user)
@@ -29,7 +30,7 @@ function ConversationItem({
   }
   return (
     <div
-      className="
+      className={`
       flex 
       flex-row 
       items-center 
@@ -37,7 +38,8 @@ function ConversationItem({
       p-2 
       hover:bg-background 
       rounded-md
-      transition-all"
+      transition-all
+      ${active && 'bg-background'}`}
       onClick={handleClick}
     >
       <Avatar />

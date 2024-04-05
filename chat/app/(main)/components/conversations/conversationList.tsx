@@ -6,9 +6,10 @@ import useConversationStore from "@/app/store/conversation-store";
 import useMessageStore from "@/app/store/message-store";
 import { useSocket } from "@/app/components/providers/socket-provider";
 import ConversationListLoading from "./skeleton/conversationLoadingSkeleton";
+import { usePathname } from "next/navigation";
 
 function ConversationList() {
-
+  const pathname = usePathname();
   const {
     setLoading,
     setConversations,
@@ -58,6 +59,7 @@ function ConversationList() {
         <ConversationItem
           key={item._id}
           conversation={item}
+          active = {pathname.includes(item._id)}
         />
       ) :
         <ConversationListLoading />

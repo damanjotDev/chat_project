@@ -19,7 +19,7 @@ function Form() {
   const {conversation} = useConversationStore();
   const {user} = useUserStore();
   const {conversationUser} = useConversationUser(conversation,user)
-  const { isLoading, setLoading, setMesssage} = useMessageStore();
+  const { isLoading, setLoading, setMesssage, setIndividualMessage} = useMessageStore();
   
   const [localTyping, setLocalTyping] = useState(false)
 
@@ -43,7 +43,16 @@ function Form() {
   }
 
   const sendMessage = () => {
-    createMessage({ body: message, chatId: conversationId }, setMesssage, setLoading);
+    setIndividualMessage(message)
+    createMessage(
+      { 
+        body: message, 
+        chatId: conversationId, 
+        userIds: conversation?.userIds?.map((item)=>item.userId), 
+        video:null,
+        image:null,
+        file:null
+      }, setMesssage, setIndividualMessage, setLoading);
     setMessage('')
   }
 
@@ -83,6 +92,7 @@ function Form() {
         rounded-full 
         p-2 
         bg-background"
+        onKeyPress={sendMessage}
         onClick={sendMessage}
         >
         <HiPaperAirplane size={18} />

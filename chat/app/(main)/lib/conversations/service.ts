@@ -58,6 +58,7 @@ export const getUserConversations = async<Payload>(
 export const createMessage = async<Payload>(
     payload: Payload,
     setState: Function,
+    setState1: Function,
     setLoading: Function,
     // navigate: Function
 ) => {
@@ -69,11 +70,12 @@ export const createMessage = async<Payload>(
         await setState(data.data)
        
         setLoading(false)
+        setState1('')
         // navigate(`${Routes.Conversations}/${data.data._id}`)
         
     } catch (err) {
         setLoading(false)
-
+        setState1('')
         const error = err as ErrorResponse;
          Toaster('error',error?.data?.message || error.message);
     }
@@ -87,7 +89,7 @@ export const getMessagesByChatId = async<Payload>(
 ) => {
     try {
 
-        setLoading(true)
+        setLoading('all')
         const {data} = await api.get<SuccessResponse<GetMessageResposeModel[]>>(`/message/by-chat-id/${chatId}`);
         
         await setState(data.data)
