@@ -5,16 +5,17 @@ import { ChatType } from "./contant";
 
 export interface MesssageModal {
     _id: string;
-    body: string;
-    image: string;
-    video: string;
-    file: string;
+    body?: string;
+    image?: string;
+    video?: string;
+    file?: string;
     userIds: any[];
-    users: UserModel[];
-    messageSentBy: string;
-    chat: ConversationModal;
+    users?: UserModel[];
+    messageSentBy?: string;
+    chat?: ConversationModal;
+    chatId: string;
     createdAt: Date;
     updatedAt: Date
   }
 
-export interface GetMessageResposeModel extends ConversationModal {}
+export interface GetMessageResposeModel extends MesssageModal {}

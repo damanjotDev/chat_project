@@ -8,7 +8,7 @@ interface MesssageState {
     message: MesssageModal | null,
     messages: MesssageModal[] | null,
     typing: null | string,
-    setLoading: (value: boolean) => void,
+    setLoading: (value: boolean | string) => void,
     setMesssage: (data: MesssageModal) => void,
     setIndividualMessage: (data: any) => void,
     setMesssages: (data: MesssageModal[]) => void,
@@ -22,8 +22,10 @@ const useMessageStore = create<MesssageState>()(persist(
         messages: null,
         typing: null,
         setLoading: (value) => set((state) => ({ isLoading: value })),
-        setIndividualMessage: (value) => set((state)=>({message: value})),
-        setMesssage: (data) => set((state) => ({ isLoading: false, messages: state.messages ? [...state.messages, data] : [data] })),
+        setIndividualMessage: (value) => set((state)=>({messages: state.messages?.length? [...state.messages,value]: [value]})),
+        setMesssage: (data) => {
+            return set((state) => ({ isLoading: false, messages: state.messages?.length ? [...state.messages, data] : [data] }))
+        } ,
         setMesssages: (data) => set((state) => ({ isLoading: false, messages: data })),
         setTyping: (value) => set((state) => ({ typing: value }))
     }),
@@ -32,4 +34,5 @@ const useMessageStore = create<MesssageState>()(persist(
     }
 ))
 
+export const {setMesssages, setIndividualMessage, setMesssage, setLoading} = useMessageStore.getState();
 export default useMessageStore

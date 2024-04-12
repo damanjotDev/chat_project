@@ -42,8 +42,17 @@ function Form() {
     }
   }
 
-  const sendMessage = () => {
-    setIndividualMessage(message)
+  const sendMessage = (e: any) => {
+    e?.preventDefault()
+    setIndividualMessage({ 
+      body: message, 
+      chatId: conversationId,
+      messageSentBy: user?._id, 
+      userIds: conversation?.userIds?.map((item)=>item.userId), 
+      video:null,
+      image:null,
+      file:null
+    })
     createMessage(
       { 
         body: message, 
@@ -53,12 +62,11 @@ function Form() {
         image:null,
         file:null
       }, setMesssage, setIndividualMessage, setLoading);
-    setMessage('')
   }
 
 
   return (
-    <div
+    <form
       className="
       bg-accent
       px-3
@@ -69,6 +77,7 @@ function Form() {
       items-center
       space-x-3
       "
+      onSubmit={sendMessage}
     >
       <HiPhoto size={30} />
       <div
@@ -84,20 +93,19 @@ function Form() {
           focus:border-gray-500"
           value={message}
           onChange={handleChange}
-          disabled={isLoading?true : false}
         />
       </div>
-      <div
+      <button
         className="
         rounded-full 
         p-2 
         bg-background"
-        onKeyPress={sendMessage}
-        onClick={sendMessage}
+        type="submit"
+        disabled={isLoading?true : false}
         >
         <HiPaperAirplane size={18} />
-      </div>
-    </div>
+      </button>
+    </form>
   );
 }
 

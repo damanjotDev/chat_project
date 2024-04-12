@@ -32,7 +32,7 @@ export function H1({title}:{title:string}):React.ReactElement {
     )
   }
   
-  export function H5({title,className}:{title:string,className?:string}):React.ReactElement {
+  export function H5({title="",className}:{title:string,className?:string}):React.ReactElement {
     return (
       <p className={`text-sm text-muted-foreground ${className}`}>
         {title}

@@ -11,20 +11,19 @@ import BodySkeleton from "./skeleton/bodySkeleton";
 
 function Body() {
   const bottomRef = useRef<HTMLDivElement>(null);
-  const { messages, setMesssages, setLoading, isLoading, message } = useMessageStore();
+  const { messages, isLoading, message } = useMessageStore();
   const { user } = useUserStore();
   const { conversation } = useConversationStore();
   const { conversationId } = useConversation();
   const { conversationUser } = useConversationUser(conversation, user);
 
   useEffect(() => {
-    getMessagesByChatId(conversationId, setMesssages, setLoading);
+    getMessagesByChatId(conversationId);
   }, []);
 
   useEffect(() => {
     bottomRef?.current?.scrollIntoView();
   }, [messages, isLoading]);
-
 
   return (
     <div
@@ -41,7 +40,7 @@ function Body() {
       {isLoading==='all' ?
       <BodySkeleton/>
       :
-        messages?.slice(0,-1)?.map((item,index) =>
+        messages?.map((item,index) =>
           item.messageSentBy == user?._id ? (
             <div
               key={item._id}
@@ -64,7 +63,7 @@ function Body() {
               >
                 <H5 title="You" />
                 <H5
-                  title={item?.body}
+                  title={item?.body || ""}
                   className="bg-accent text-start py-[7px] px-3 rounded-md mt-1 max-w-[50%] overflow-x-auto h-auto"
                 />
               </div>
@@ -95,7 +94,7 @@ function Body() {
                   }
                 />
                 <H5
-                  title={item?.body}
+                  title={item?.body || ""}
                   className="bg-accent text-start py-[7px] px-3 rounded-md mt-1 max-w-[50%]"
                 />
               </div>
@@ -103,32 +102,6 @@ function Body() {
           ))
       }
 
-     <div
-        className="
-          flex 
-          flex-row 
-          items-start
-          justify-start 
-          space-x-1
-          w-full 
-          "
-      >
-        <div
-          className={
-            `flex 
-            flex-col
-            items-end 
-            w-full
-            ${messages?.length===0 && 'hidden'}`
-          }
-        >
-          <H5 title="You" />
-          <H5
-            title={isLoading==='message' ? `${message}@@` : messages?.[messages?.length-1]?.body }
-            className="bg-accent text-start py-[7px] px-3 rounded-md mt-1 max-w-[50%]"
-          />
-        </div>
-      </div>
       <div className="pt-2" ref={bottomRef} />
     </div>
   );

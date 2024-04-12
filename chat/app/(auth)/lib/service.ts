@@ -1,10 +1,12 @@
 import { GetUserResposeModel } from "@/app/(main)/lib/users/user-model";
 import api from "@/app/axios";
+import { firebaseAuth, signInWithPhoneNumber } from "@/app/firebase/firebase";
 import { Routes } from "@/app/lib/constant";
 import { ErrorResponse } from "@/app/lib/error-response-model";
 import { SuccessResponse } from "@/app/lib/response-model";
 import { Toaster } from "@/app/lib/toast";
 import { deleteCookie, setCookie } from "cookies-next";
+import { RecaptchaVerifier } from "firebase/auth";
 
 export const userAuth = async <Payload>(
     payload: Payload,
@@ -127,3 +129,19 @@ export const changePassword = async(
          Toaster('error',error?.data?.message || error.message);
     }
 };
+
+// export const sendOtp = async() => {
+//     try {
+       
+//         const recaptcha = new RecaptchaVerifier(firebaseAuth, 'recaptcha', {})
+//         const confirmationResult = await signInWithPhoneNumber(firebaseAuth, "+917888730431", recaptcha);
+//         // OTP sent successfully
+//         const verificationCode: any = prompt('Enter OTP');
+//         const result = await confirmationResult.confirm(verificationCode);
+//         // OTP verification successful
+//         console.log(result);
+//       } catch (error: any) {
+//         // Handle errors
+//         console.log(error);
+//       }      
+// };

@@ -5,6 +5,7 @@ import { SuccessResponse } from "@/app/lib/response-model";
 import { Toaster } from "@/app/lib/toast";
 import { GetConversationResposeModel } from "./conversation-model";
 import { GetMessageResposeModel } from "./message-model";
+import { setLoading, setMesssages } from "@/app/store/message-store";
 
 export const createConversation = async<Payload>(
     payload: Payload,
@@ -63,36 +64,32 @@ export const createMessage = async<Payload>(
     // navigate: Function
 ) => {
     try {
-
+        
         setLoading('message')
         const {data} = await api.post<SuccessResponse<GetMessageResposeModel>>(`/message/create`,payload);
         
-        await setState(data.data)
-       
+        // await setState(data.data)
+        getMessagesByChatId(data.data?.chatId)
         setLoading(false)
-        setState1('')
+        
         // navigate(`${Routes.Conversations}/${data.data._id}`)
         
     } catch (err) {
         setLoading(false)
-        setState1('')
         const error = err as ErrorResponse;
          Toaster('error',error?.data?.message || error.message);
     }
 };
 
 export const getMessagesByChatId = async<Payload>(
-    chatId: string | any,
-    setState: Function,
-    setLoading: Function,
-    // navigate: Function
+    chatId: string | any
 ) => {
     try {
 
         setLoading('all')
         const {data} = await api.get<SuccessResponse<GetMessageResposeModel[]>>(`/message/by-chat-id/${chatId}`);
         
-        await setState(data.data)
+        setMesssages(data?.data)
         // Toaster('success', data.message);
        
         setLoading(false)
