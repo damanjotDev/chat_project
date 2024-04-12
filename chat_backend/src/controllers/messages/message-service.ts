@@ -26,28 +26,27 @@ export const createMessageService = async (
 
 export const createMultipleMessagesService = async (
     user,
-    createMessageDto,
+    createMessageDto: CreateMessageDto,
 ): Promise<CreateMessageResponseDto> => {
 
-    const chat = await getAggregationChatById(createMessageDto?.[0].chatId)
+    const chat = await getChatById(createMessageDto?.chatId)
     const userIds = chat.userIds.map((item) => ({ isMessageDelete: false, userId: item.userId }))
 
-    createMessageDto.forEach((ele)=>{
-        ele.userIds = userIds;
-        ele.messageSentBy = user._id;
-    })
+    createMessageDto.userIds = userIds;
+    createMessageDto.messageSentBy = user._id;
 
     let messageResponse = await createManyMessage(createMessageDto); 
 
-    messageResponse.forEach((ele)=>{
-        chat.messageIds.push(ele._id)
-    })
+    if(messageResponse?.length){
+        messageResponse.forEach((ele)=>{
+            chat.messageIds.push(ele._id)
+        })
+    
+        await updateChatById(chat._id, { messageIds: chat.messageIds })
+        messageResponse = await getMessageById(messageResponse[messageResponse?.length-1]._id)
+    }
 
-    await updateChatById(chat._id, { messageIds: chat.messageIds })
-
-    const new_messageResponse = await getMessageById(messageResponse[messageResponse?.length-1]._id)
-
-    return new_messageResponse
+    return messageResponse
 }
 
 export const updateMessageService = async (

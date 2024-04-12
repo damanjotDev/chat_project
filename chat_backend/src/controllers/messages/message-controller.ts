@@ -3,15 +3,12 @@ import { ChatEventEnum } from "../../constants";
 import { emitSocketEvent } from "../../socket";
 import { ApiResponse } from "../../utils/api-response";
 import { asyncHandler } from "../../utils/async-handler";
-import { pullMessageRedis, pushMessageRedis } from "./message-redis-service";
-import { createMessageService, deleteMessageService, getMessagesByChatIdService, updateMessageService } from "./message-service";
+import { createMultipleMessagesService, deleteMessageService, getMessagesByChatIdService, updateMessageService } from "./message-service";
 
 
-const createMessage = asyncHandler(async (req, res) => {
+const createMessage = asyncHandler(async (req, res, ) => {
 
-       const response = await pushMessageRedis(req.user, req.body);
-
-    // const response = await createMessageService(req.user, req.body);
+    const response = await createMultipleMessagesService(req.user, req.body);
 
         res.
         status(201).
@@ -46,11 +43,7 @@ const updateMessage = asyncHandler(async (req, res) => {
 
 const getMessagesByChatId = asyncHandler(async (req, res) => {
 
-    let response =  await pullMessageRedis(req.params.id)
-
-    if(response?.length===0 ) {
-         response = await getMessagesByChatIdService(req.params.id)
-    }
+    const response = await getMessagesByChatIdService(req.params.id)
 
     return res.
         status(200).
