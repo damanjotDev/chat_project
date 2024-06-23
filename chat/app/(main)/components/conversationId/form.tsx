@@ -9,6 +9,7 @@ import useMessageStore from "@/app/store/message-store";
 import { useConversationUser } from "@/app/hooks/useConversationUser";
 import useConversationStore from "@/app/store/conversation-store";
 import useUserStore from "@/app/store/user-store";
+import { ChatEventEnum } from "@/app/lib/constant";
 let id: any = null;
 function Form() {
 
@@ -30,13 +31,23 @@ function Form() {
 
       if (!message) {
         setLocalTyping(true)
-        socket.emit('typing', {conversationId:conversation?._id,receiverId:conversationUser?._id});
+        socket.send(JSON.stringify({
+          chatId:conversation?._id,
+          event: ChatEventEnum.TYPING_EVENT,
+          typing: true
+        }));
+        console.log("working")
       }
 
       if (id) clearTimeout(id)
 
       id = setTimeout(() => {
-        socket.emit('stopTyping', {conversationId:conversation?._id,receiverId:conversationUser?._id})
+        console.log("working")
+        socket.send(JSON.stringify({
+          chatId:conversation?._id,
+          event: ChatEventEnum.TYPING_EVENT,
+          typing: false
+        }));
       }, 4000)
 
     }

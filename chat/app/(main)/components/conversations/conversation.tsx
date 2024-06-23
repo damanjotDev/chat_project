@@ -1,6 +1,8 @@
 import React from "react";
-import ConversationList from "./conversationList";
 import ConversationTitle from "./conversationtTitle";
+import dynamic from "next/dynamic";
+
+const ConversationList =  dynamic(()=>import("./conversationList"),{ssr: false}) ;
 
 function ConversationPage() {
   return (

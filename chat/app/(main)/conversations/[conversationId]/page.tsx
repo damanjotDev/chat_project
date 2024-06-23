@@ -6,6 +6,7 @@ import Body from "../../components/conversationId/body";
 import Form from "../../components/conversationId/form";
 import { useSocket } from "@/app/components/providers/socket-provider";
 import useMessageStore from "@/app/store/message-store";
+import { ChatEventEnum } from "@/app/lib/constant";
 
 interface IParams {
   conversationId: string;
@@ -21,25 +22,21 @@ function ConversationId({ params }: { params: IParams }) {
     setTyping(null);
 
     if (socket) {
-      socket.on('typing', (res: any) => {
-        setTyping(res?.conversationId)
-      })
+      socket.onmessage = (res: any) => {
+        const data = JSON.parse(res);
 
-      socket.on('stopTyping', (res: any) => {
-        setTyping(null)
-      })
+        if(data.event===ChatEventEnum.TYPING_EVENT){
+          setTyping(data.typing?data.chatId:null)
+        }
 
-      socket.on('messageReceived', (res: any) => {
-        setMesssage(res)
-      })
+        else if(data.event===ChatEventEnum.MESSAGE_RECEIVED_EVENT){
+          setMesssage(data.data)
+        }
+      }
 
     }
 
     return () => {
-      setMesssages([])
-      socket?.off('typing');
-      socket?.off('stopTyping');
-      socket?.off('messageReceived');
     };
 
   }, [socket])

@@ -3,6 +3,7 @@ import { io as ClientIO } from "socket.io-client";
 import { useContext, useEffect, useState, createContext } from "react";
 import { getCookie } from "cookies-next";
 import { Toaster } from "@/app/lib/toast";
+import { ChatEventEnum } from "@/app/lib/constant";
 
 type SocketContextType = {
     socket: any | null;
@@ -23,34 +24,35 @@ export const SocketProvider = ({
 }: {
     children: React.ReactNode
 }) => {
-    const [socket, setSocket] = useState(null);
+    const [socket, setSocket] = useState<any>(null);
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        const socketInstance = new (ClientIO as any)(process.env.NEXT_PUBLIC_BACKEND_API_URL,{
-            query: {
-                token: getCookie('accessToken')
-            }
-        });
-
-        socketInstance.on('connect', () => {
-            setIsConnected(true)
-        })
-
-        socketInstance.on('disconnect', () => {
-            setIsConnected(false)
-        })
-
-        socketInstance.on('newChat',(res:any)=>{
-            Toaster('success','someone create chat with you')
-          })
-
-        setSocket(socketInstance)
-
+        const socketInstance = new WebSocket("ws://localhost:8000");
+    
+        socketInstance.onopen = () => {
+            console.log('WebSocket connected');
+            setIsConnected(true);
+            socketInstance.send(JSON.stringify({ event: ChatEventEnum.CONNECTED_EVENT, token: getCookie('accessToken') }));
+            setSocket(socketInstance);
+        };
+    
+        socketInstance.onclose = () => {
+            console.log('WebSocket disconnected');
+        };
+    
+        socketInstance.onmessage = (event) => {
+            console.log('Received data:', event.data);
+            // Handle incoming messages here
+        };
+    
         return () => {
-            socketInstance.disconnect();
-        }
-    }, [])
+            if (socketInstance) {
+                socketInstance.close();
+            }
+        };
+    }, []);
+
 
     return (
         <SocketContext.Provider value={{ socket, isConnected }}>

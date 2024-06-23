@@ -7,6 +7,7 @@ import useMessageStore from "@/app/store/message-store";
 import { useSocket } from "@/app/components/providers/socket-provider";
 import ConversationListLoading from "./skeleton/conversationLoadingSkeleton";
 import { usePathname } from "next/navigation";
+import { ChatEventEnum } from "@/app/lib/constant";
 
 function ConversationList() {
   const pathname = usePathname();
@@ -26,18 +27,15 @@ function ConversationList() {
 
   useEffect(() => {
     if (socket) {
-      socket.on('typing', (res: any) => {
-        setTyping(res?.conversationId)
-      })
-
-      socket.on('stopTyping', (res: string) => {
-        setTyping(null)
-      })
+      socket.onmessage = (res: any) => {
+        const data = JSON.parse(res);
+        if(data.event===ChatEventEnum.TYPING_EVENT){
+          setTyping(data.typing?data.chatId:null)
+        }
+      };
     }
 
     return () => {
-      socket?.off('typing');
-      socket?.off('stopTyping');
     };
 
   }, [socket])
